@@ -1,10 +1,8 @@
 # Data_Analytics_Project
 Data_Analytics_Project
-# **Case Study: Advanced Analysis of Data Analyst Job Listings in India**
+# Case Study: Advanced Analysis of Data Analyst Job Listings in India
 
-### Data Importing and Description
-"""
-
+# Data Importing and Description
 import pandas as pd
 import numpy as np
 import re
@@ -18,13 +16,9 @@ from sklearn.preprocessing import OneHotEncoder
 
 # Load the dataset
 df = pd.read_csv("/content/dataAnalystJobsIndia_7th_July_2024.csv")
-
 df
-
 df.describe()
-
 print(df.columns.tolist())
-
 print(df.dtypes)
 
 missing = df.isnull().sum()
@@ -36,12 +30,10 @@ missing_summary = pd.DataFrame({
 print(missing_summary)
 
 print(df.describe(include="number"))
-
 print(df.describe(include="object"))
-
 print("Number of duplicate rows:", df.duplicated().sum())
 
-"""### 1. DATA CLEANING AND PREPROCESSING"""
+# 1. DATA CLEANING AND PREPROCESSING
 
 # Clean salary columns
 def extract_salary_number(x):
@@ -90,7 +82,7 @@ df["location_clean"] = df["location"].str.split(",").str[0].str.strip()
 # Removeing rows where essential values are missing
 df = df.dropna(subset=["rating", "reviews_count_num", "exp_mid"])
 
-"""### 2. EXPLORATORY DATA ANALYSIS"""
+# 2. EXPLORATORY DATA ANALYSIS"""
 
 # Rating distribution
 plt.figure(figsize=(8,5))
@@ -118,7 +110,7 @@ sns.histplot(df["exp_mid"], kde=True)
 plt.title("Distribution of Required Experience")
 plt.show()
 
-"""### 3. STATISTICAL ANALYSIS"""
+# 3. STATISTICAL ANALYSIS
 
 print("Top locations:\n", df["location"].value_counts())
 print("\nTop companies:\n", df["company"].value_counts())
@@ -134,8 +126,8 @@ if len(clean_corr) >= 2:
         clean_corr["base salary"], clean_corr["reviews count"]
     )
 
-    print("\nPearson:", pearson_r, pearson_p)
-    print("Spearman:", spearman_rho, spearman_p)
+print("\nPearson:", pearson_r, pearson_p)
+print("Spearman:", spearman_rho, spearman_p)
 
 # Comparing ratings on Naukri vs iimjobs
 naukri = df[df["postedIn"] == "Naukri"]["rating"]
@@ -148,7 +140,7 @@ print(stats.ttest_ind(naukri, iim, nan_policy="omit"))
 print("\nCorrelation (ratings vs reviews count)")
 print(stats.pearsonr(df["rating"], df["reviews_count_num"]))
 
-"""### 4. MACHINE LEARNING MODEL"""
+# 4. MACHINE LEARNING MODEL
 
 # Keeping only rows where salary exists
 ml_df = df.dropna(subset=["base_salary_num"])
@@ -160,13 +152,13 @@ else:
     X = ml_df[["exp_mid", "rating", "reviews_count_num", "jobListed(days ago)"]]
     y = ml_df["base_salary_num"]
 
-    # Handle remaining NaN
-    X = X.fillna(X.mean())
+# Handle remaining NaN
+X = X.fillna(X.mean())
 
-    # Train-test splitting
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42
-    )
+# Train-test splitting
+X_train, X_test, y_train, y_test = train_test_split(
+X, y, test_size=0.3, random_state=42
+ )
 
     model = RandomForestRegressor(random_state=42)
     model.fit(X_train, y_train)
@@ -179,12 +171,12 @@ print("\nMODEL RESULTS")
     print("R²:", r2_score(y_test, y_pred))
 
 # Feature Importance
-    feat_imp = pd.DataFrame({
+feat_imp = pd.DataFrame({
         "Feature": X.columns,
         "Importance": model.feature_importances_
     }).sort_values(by="Importance", ascending=False)
 
-    print("\nFEATURE IMPORTANCE")
+print("\nFEATURE IMPORTANCE")
     print(feat_imp)
 
 # Plot feature importance
